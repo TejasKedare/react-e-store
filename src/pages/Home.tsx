@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { get } from "../helpers/axios-helpers";
 import { Link } from "react-router-dom";
 import type { Product, ProductsResponse } from "../types/product.types";
+import ProductCard from "../components/ProductCard";
 
 const Home = () => {
     const [products, setProducts] = useState<Product[]>([]);
@@ -64,26 +65,7 @@ const Home = () => {
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                         {products.map((product) => (
-                            <div key={product.id} className="card">
-                                <img
-                                    src={product.image}
-                                    alt={product.title}
-                                    className="h-40 mx-auto object-contain"
-                                />
-
-                                <h3 className="mt-4 text-sm font-semibold line-clamp-2">
-                                    {product.title}
-                                </h3>
-
-                                <p className="price mt-2">₹ {product.price}</p>
-
-                                <Link
-                                    to={`/product/${product.id}`}
-                                    className="btn-outline mt-4 block text-center"
-                                >
-                                    View Details
-                                </Link>
-                            </div>
+                          <ProductCard product={product}/>
                         ))}
                     </div>
                 )}
