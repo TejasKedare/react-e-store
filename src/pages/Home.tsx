@@ -25,7 +25,7 @@ const Home = () => {
 
     return (
         <div className="space-y-20">
-            {/* ---------------- Hero Section ---------------- */}
+            {/* ---------------- HERO SECTION ---------------- */}
             <section className="bg-surface py-16">
                 <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-10 items-center">
                     <div>
@@ -50,7 +50,7 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* ---------------- Featured Products ---------------- */}
+            {/* ---------------- FEATURED PRODUCTS---------------- */}
             <section className="max-w-7xl mx-auto px-6">
                 <div className="flex items-center justify-between mb-6">
                     <h2>Featured Products</h2>
@@ -89,22 +89,18 @@ const Home = () => {
                 )}
             </section>
 
-            {/* ---------------- Categories ---------------- */}
+            {/* ---------------- CATEGORIES ---------------- */}
             <section className="bg-background py-12">
                 <div className="max-w-7xl mx-auto px-6">
                     <h2 className="mb-6">Shop by Category</h2>
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                        {[
-                            "Men's Clothing",
+                        {[  "Men's Clothing",
                             "Women's Clothing",
                             "Electronics",
                             "Jewellery",
                         ].map((category) => (
-                            <div
-                                key={category}
-                                className="card text-center cursor-pointer hover:shadow-soft transition"
-                            >
+                            <div key={category} className="card text-center cursor-pointer hover:shadow-soft transition" >
                                 <p className="font-medium">{category}</p>
                             </div>
                         ))}
