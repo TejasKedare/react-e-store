@@ -8,32 +8,38 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#2563EB", // blue-600
-          light: "#3B82F6",
-          dark: "#1E40AF",
+          DEFAULT: "#7C2D12", // deep rust
+          light: "#9A3412",
+          dark: "#431407",
         },
+
         secondary: {
-          DEFAULT: "#F97316", // orange-500
-          light: "#FB923C",
-          dark: "#C2410C",
+          DEFAULT: "#365314", // olive green
+          light: "#4D7C0F",
+          dark: "#1A2E05",
         },
-        accent: "#22C55E", // green-500
-        danger: "#EF4444",
-        muted: "#6B7280",
-        surface: "#F9FAFB",
+
+        accent: "#CA8A04", // muted gold
+        surface: "#FBF5EF", // warm parchment
+        background: "#F3ECDC",
+        textPrimary: "#2A1E17", // espresso brown
+        textMuted: "#6B5C4D",
+        danger: "#B91C1C",
       },
 
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
+        heading: ["Playfair Display", "serif"],
       },
 
       boxShadow: {
-        card: "0 4px 12px rgba(0,0,0,0.08)",
-        soft: "0 2px 8px rgba(0,0,0,0.06)",
+        card: "0 8px 24px rgba(42,30,23,0.12)",
+        soft: "0 4px 12px rgba(42,30,23,0.08)",
       },
 
       borderRadius: {
         xl: "1rem",
+        "2xl": "1.25rem",
       },
     },
   },
