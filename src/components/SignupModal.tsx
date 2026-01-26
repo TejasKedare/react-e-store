@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form";
 import Modal from "./Modal";
+import { signup } from "../utils/localAuth";
 
 interface SignupModalProps {
   isOpen: boolean;
@@ -13,16 +14,18 @@ interface SignupFormValues {
 }
 
 const SignupModal = ({ isOpen, onClose }: SignupModalProps) => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<SignupFormValues>();
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<SignupFormValues>();
 
-  const onSubmit = (data: SignupFormValues) => {
-    console.log("Signup Data:", data);
+  const onSubmit = async (data: SignupFormValues) => {
+  try {
+    signup(data);
+    alert("Signup successful! Please login.");
     onClose();
-  };
+  } catch (err: unknown) {
+    alert(err instanceof Error ? err.message : "An error occurred");
+  }
+};
+
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -49,7 +52,7 @@ const SignupModal = ({ isOpen, onClose }: SignupModalProps) => {
           )}
         </div>
 
-        {/* Email */}
+
         <div>
           <label className="text-sm font-medium">Email</label>
           <input
@@ -70,7 +73,6 @@ const SignupModal = ({ isOpen, onClose }: SignupModalProps) => {
           )}
         </div>
 
-        {/* Password */}
         <div>
           <label className="text-sm font-medium">Password</label>
           <input

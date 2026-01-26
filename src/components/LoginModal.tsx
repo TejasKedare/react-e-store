@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form";
 import Modal from "./Modal";
+import { login } from "../utils/localAuth";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -18,10 +19,14 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>();
 
-  const onSubmit = (data: LoginFormValues) => {
-    console.log("Login Data:", data);
+  const onSubmit = async (data: LoginFormValues) => {
+  try {
+    login(data.username, data.password);
     onClose();
-  };
+ } catch (err: unknown) {
+    alert(err instanceof Error ? err.message : "An error occurred");
+  }
+};
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>

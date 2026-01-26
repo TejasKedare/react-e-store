@@ -1,11 +1,23 @@
 import { Link, NavLink } from "react-router-dom";
 import LoginModal from "../components/LoginModal";
 import SignupModal from "../components/SignupModal";
-import { useState } from "react";
+import {  useState } from "react";
+import { getAuthUser, logout } from "../utils/localAuth";
+
+interface AuthUser {
+  username: string;
+  email: string;
+}
 
 const Header = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
+  const [user, setUser] = useState<AuthUser | null>(() => getAuthUser());
+
+    const handleLogout = () => {
+    logout();
+    setUser(null);
+  };
 
   return (
     <>
@@ -41,39 +53,57 @@ const Header = () => {
               Shop
             </NavLink>
 
-            <NavLink
-              to="/profile"
-              className={({ isActive }) =>
-                `font-medium ${
-                  isActive ? "text-primary" : "text-textMuted"
-                } hover:text-primary transition`
-              }
-            >
-              Profile
-            </NavLink>
+            {user && (
+              <NavLink
+                to="/profile"
+                className={({ isActive }) =>
+                  `font-medium ${
+                    isActive ? "text-primary" : "text-textMuted"
+                  } hover:text-primary transition`
+                }
+              >
+                Profile
+              </NavLink>
+            )}
           </nav>
 
           {/* Right Actions */}
           <div className="flex items-center gap-4">
-            {/* Auth Buttons */}
-            <button
-              onClick={() => setShowLogin(true)}
-              className="btn-outline hidden md:block"
-            >
-              Login
-            </button>
+            {/* Auth State */}
+            {!user ? (
+              <>
+                <button
+                  onClick={() => setShowLogin(true)}
+                  className="btn-outline hidden md:block"
+                >
+                  Login
+                </button>
 
-            <button
-              onClick={() => setShowSignup(true)}
-              className="btn-primary hidden md:block"
-            >
-              Sign Up
-            </button>
+                <button
+                  onClick={() => setShowSignup(true)}
+                  className="btn-primary hidden md:block"
+                >
+                  Sign Up
+                </button>
+              </>
+            ) : (
+              <>
+                <span className="hidden md:block text-textPrimary font-medium">
+                  Hi, {user.username}
+                </span>
+
+                <button
+                  onClick={handleLogout}
+                  className="btn-outline hidden md:block"
+                >
+                  Logout
+                </button>
+              </>
+            )}
 
             {/* Cart */}
             <Link to="/checkout" className="relative">
               <span className="text-textPrimary font-medium">Cart</span>
-
               <span className="absolute -top-2 -right-3 bg-primary text-white text-xs rounded-full px-1.5 py-0.5">
                 2
               </span>
@@ -82,9 +112,13 @@ const Header = () => {
         </div>
       </header>
 
+      {/* Modals */}
       <LoginModal
         isOpen={showLogin}
-        onClose={() => setShowLogin(false)}
+        onClose={() => {
+          setShowLogin(false);
+          setUser(getAuthUser()); // refresh user after login
+        }}
       />
 
       <SignupModal
@@ -94,6 +128,5 @@ const Header = () => {
     </>
   );
 };
-
 
 export default Header;
