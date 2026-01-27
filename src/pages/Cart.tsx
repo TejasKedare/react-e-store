@@ -125,7 +125,7 @@ const Cart = () => {
           </div>
 
           <button className="btn-primary w-full">
-            Proceed to Checkout
+            <Link to="/checkout">Proceed to Checkout</Link>
           </button>
         </div>
       </div>
