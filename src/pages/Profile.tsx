@@ -37,9 +37,9 @@ const Profile = () => {
       </div>
 
       {/* -------- Address Section -------- */}
+      <h1 className="mt-12">Saved Addresses</h1>
       <div className="card mt-6">
         <div className="flex items-center justify-between mb-4">
-          <h3>Saved Addresses</h3>
 
           <button onClick={() => setShowAddressModal(true)} className="btn-outline text-sm" >
             Add Address
