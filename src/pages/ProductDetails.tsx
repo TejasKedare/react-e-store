@@ -2,12 +2,16 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { get } from "../helpers/axios-helpers";
 import type { Product } from "../types/product.types";
-import { addToCart } from "../utils/cartStorage";
+import { addToCart, getUserCart, updateCartQuantity, removeFromCart } from "../utils/cartStorage";
 
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [cartItem, setCartItem] = useState<{
+    quantity: number;
+  } | null>(null);
+
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -24,18 +28,66 @@ const ProductDetails = () => {
     fetchProduct();
   }, [id]);
 
+  useEffect(() => {
+    if (!product) return;
+
+    const item = getUserCart().find(
+      (i) => i.product.id === product.id
+    );
+
+    setCartItem(item ? { quantity: item.quantity } : null);
+  }, [product]);
+
+
   const handleAddToCart = () => {
+    if (!product) return;
+
     try {
-      if (product) {
-        addToCart(product);
-        alert("Added to cart");
-      }
-    } catch (err: Error | unknown) {
+      addToCart(product);
+
+      const item = getUserCart().find(
+        (i) => i.product.id === product.id
+      );
+
+      setCartItem(item ? { quantity: item.quantity } : null);
+    } catch (err: unknown) {
       if (err instanceof Error && err.message === "NOT_LOGGED_IN") {
         alert("Please login to add items to cart");
       }
     }
   };
+
+  const handleIncrease = () => {
+    if (!product || !cartItem) return;
+
+    updateCartQuantity(product.id, cartItem.quantity + 1);
+
+    const item = getUserCart().find(
+      (i) => i.product.id === product.id
+    );
+
+    setCartItem(item ? { quantity: item.quantity } : null);
+  };
+
+  const handleDecrease = () => {
+    if (!product || !cartItem) return;
+
+    updateCartQuantity(product.id, cartItem.quantity - 1);
+
+    const item = getUserCart().find(
+      (i) => i.product.id === product.id
+    );
+
+    setCartItem(item ? { quantity: item.quantity } : null);
+  };
+
+  const handleRemove = () => {
+    if (!product) return;
+
+    removeFromCart(product.id);
+    setCartItem(null);
+  };
+
 
 
   if (loading) {
@@ -76,16 +128,34 @@ const ProductDetails = () => {
           </p>
 
           {/* Actions */}
-          <div className="flex gap-4 mt-6">
-            <button className="btn-primary" onClick={handleAddToCart} >
-              Add to Cart
-            </button>
+          <div className="flex gap-4 mt-6 items-center">
+            {!cartItem ? (
+              <button className="btn-primary" onClick={handleAddToCart}>
+                Add to Cart
+              </button>
+            ) : (
+              <div className="flex items-center gap-3">
+                <button className="btn-outline" onClick={handleDecrease}>
+                  −
+                </button>
 
+                <span className="font-medium">{cartItem.quantity}</span>
 
-            <button className="btn-outline">
-              Buy Now
-            </button>
+                <button className="btn-outline" onClick={handleIncrease}>
+                  +
+                </button>
+
+                <button
+                  className="text-danger text-sm ml-4"
+                  onClick={handleRemove}
+                >
+                  Remove
+                </button>
+              </div>
+            )}
           </div>
+
+
         </div>
       </div>
     </div>
