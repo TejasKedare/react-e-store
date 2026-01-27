@@ -5,6 +5,7 @@ import Checkout from "../pages/Checkout";
 import Profile from "../pages/Profile";
 import NotFound from "../pages/NotFound";
 import ProductDetails from "../pages/ProductDetails";
+import Cart from "../pages/Cart";
 
 const AppRoutes = () => {
   return (
@@ -14,6 +15,7 @@ const AppRoutes = () => {
       <Route path="/checkout" element={<Checkout />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/product/:id" element={<ProductDetails />} />
+      <Route path="/cart" element={<Cart />} />
 
       {/* Fallback route */}
       <Route path="*" element={<NotFound />} />

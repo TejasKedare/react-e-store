@@ -89,7 +89,7 @@ const Header = () => {
             )}
 
             {/* Cart */}
-            <Link to="/checkout" className="relative">
+            <Link to="/cart" className="relative">
               <span className="text-textPrimary font-medium">Cart</span>
               <span className="absolute -top-2 -right-3 bg-primary text-white text-xs rounded-full px-1.5 py-0.5">
                 {cartCount}

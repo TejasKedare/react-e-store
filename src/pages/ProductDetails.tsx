@@ -89,7 +89,6 @@ const ProductDetails = () => {
   };
 
 
-
   if (loading) {
     return <p className="p-6">Loading product...</p>;
   }
