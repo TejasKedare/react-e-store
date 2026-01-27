@@ -1,10 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { useState } from "react";
 import { getAuthUser } from "../utils/localAuth";
-import {
-  getUserAddresses,
-  deleteUserAddress,
-} from "../utils/addressStorage";
+import { getUserAddresses, deleteUserAddress } from "../utils/addressStorage";
 import Modal from "../components/Modal";
 import AddressForm from "../components/AddressModal";
 
@@ -72,10 +69,7 @@ const Profile = () => {
                 <p>{addr.phone}</p>
               </div>
 
-              <button
-                onClick={() => handleDeleteAddress(addr.id)}
-                className="text-danger text-sm hover:underline"
-              >
+              <button onClick={() => handleDeleteAddress(addr.id)} className="text-danger text-sm hover:underline" >
                 Delete
               </button>
             </div>

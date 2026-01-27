@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { get } from "../helpers/axios-helpers";
 import type { Product } from "../types/product.types";
+import { addToCart } from "../utils/cartStorage";
 
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -23,6 +24,20 @@ const ProductDetails = () => {
     fetchProduct();
   }, [id]);
 
+  const handleAddToCart = () => {
+    try {
+      if (product) {
+        addToCart(product);
+        alert("Added to cart");
+      }
+    } catch (err: Error | unknown) {
+      if (err instanceof Error && err.message === "NOT_LOGGED_IN") {
+        alert("Please login to add items to cart");
+      }
+    }
+  };
+
+
   if (loading) {
     return <p className="p-6">Loading product...</p>;
   }
@@ -34,7 +49,7 @@ const ProductDetails = () => {
   return (
     <div className="max-w-7xl mx-auto px-6 py-10">
       <div className="grid md:grid-cols-2 gap-10">
-        
+
         {/* Image */}
         <div className="bg-white rounded-2xl shadow-card p-6 flex items-center justify-center">
           <img
@@ -62,9 +77,10 @@ const ProductDetails = () => {
 
           {/* Actions */}
           <div className="flex gap-4 mt-6">
-            <button className="btn-primary">
+            <button className="btn-primary" onClick={handleAddToCart} >
               Add to Cart
             </button>
+
 
             <button className="btn-outline">
               Buy Now
