@@ -37,14 +37,13 @@ const Profile = () => {
       </div>
 
       {/* -------- Address Section -------- */}
-      <h1 className="mt-12">Saved Addresses</h1>
-      <div className="card mt-6">
-        <div className="flex items-center justify-between mb-4">
-
+        <div className="flex items-center justify-between mb-4 mt-12">
+      <h1 >Saved Addresses</h1>
           <button onClick={() => setShowAddressModal(true)} className="btn-outline text-sm" >
             Add Address
           </button>
         </div>
+      <div className="card mt-6">
 
         {addresses.length ? (
           addresses.map((addr) => (
