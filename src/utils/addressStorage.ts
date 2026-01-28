@@ -11,6 +11,7 @@ export interface Address {
 }
 
 const ADDRESS_KEY = "userAddresses";
+const DEFAULT_ADDRESS_KEY = "defaultAddress";
 
 /* ---------- Helpers ---------- */
 
@@ -58,4 +59,35 @@ export const deleteUserAddress = (id: string) => {
     ...all,
     [user.username]: (all[user.username] || []).filter(a => a.id !== id),
   });
+};
+
+
+/* ---------- Default Address ---------- */
+
+export const getDefaultAddressId = (): string | null => {
+  const user = getAuthUser();
+  if (!user) return null;
+
+  const data = JSON.parse(
+    localStorage.getItem(DEFAULT_ADDRESS_KEY) || "{}"
+  );
+
+  return data[user.username] || null;
+};
+
+export const setDefaultAddressId = (addressId: string) => {
+  const user = getAuthUser();
+  if (!user) return;
+
+  const data = JSON.parse(
+    localStorage.getItem(DEFAULT_ADDRESS_KEY) || "{}"
+  );
+
+  localStorage.setItem(
+    DEFAULT_ADDRESS_KEY,
+    JSON.stringify({
+      ...data,
+      [user.username]: addressId,
+    })
+  );
 };
