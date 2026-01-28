@@ -28,7 +28,7 @@ const Header = () => {
 
           {/* Logo */}
           <Link to="/" className="text-2xl font-heading font-bold text-primary">
-            React<span className="text-secondary">E-Store</span>
+            React <span className="text-secondary">E-Store</span>
           </Link>
 
           {/* Navigation */}
