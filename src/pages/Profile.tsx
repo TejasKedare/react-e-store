@@ -56,23 +56,17 @@ const Profile = () => {
 
         <aside className="md:col-span-1">
           <div className="card space-y-2">
-            <button
-              onClick={() => setActiveSection("account")}
-              className={`w-full text-left px-3 py-2 rounded ${activeSection === "account"
+            <button onClick={() => setActiveSection("account")} className={`w-full text-left px-3 py-2 rounded ${activeSection === "account"
                   ? "bg-primary text-white"
                   : "hover:bg-background"
-                }`}
-            >
+                }`} >
               Account
             </button>
 
-            <button
-              onClick={() => setActiveSection("addresses")}
-              className={`w-full text-left px-3 py-2 rounded ${activeSection === "addresses"
+            <button onClick={() => setActiveSection("addresses")} className={`w-full text-left px-3 py-2 rounded ${activeSection === "addresses"
                   ? "bg-primary text-white"
                   : "hover:bg-background"
-                }`}
-            >
+                }`} >
               Addresses
             </button>
 

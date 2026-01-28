@@ -53,7 +53,7 @@ const Header = () => {
 
             {user && (
               <NavLink
-                to="/profile"
+                to="/profile/account"
                 className={({ isActive }) =>
                   `font-medium ${isActive ? "text-primary" : "text-textMuted"
                   } hover:text-primary transition`
