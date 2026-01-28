@@ -49,13 +49,11 @@ const Profile = () => {
   if (!user) return <Navigate to="/" replace />;
 
 
-  /* ---------- UI ---------- */
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
       <div className="grid md:grid-cols-4 gap-8">
 
-        {/* ================= Sidebar ================= */}
         <aside className="md:col-span-1">
           <div className="card space-y-2">
             <button
@@ -129,7 +127,6 @@ const Profile = () => {
             </>
           )}
 
-          {/* ---------- ADDRESSES ---------- */}
           {activeSection === "addresses" && (
             <>
               <div className="flex justify-between items-center">
@@ -204,7 +201,6 @@ const Profile = () => {
             </>
           )}
 
-          {/* ---------- ORDERS ---------- */}
           {activeSection === "orders" && (
             <>
               <h1>My Orders</h1>
@@ -264,11 +260,7 @@ const Profile = () => {
         </main>
       </div>
 
-      {/* ================= Address Modal ================= */}
-      <Modal
-        isOpen={showAddressModal}
-        onClose={() => setShowAddressModal(false)}
-      >
+      <Modal isOpen={showAddressModal} onClose={() => setShowAddressModal(false)} >
         <AddressForm
           onSuccess={() => {
             const updated = getUserAddresses();
