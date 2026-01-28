@@ -1,7 +1,11 @@
 import { Navigate } from "react-router-dom";
 import { useState } from "react";
 import { getAuthUser } from "../utils/localAuth";
-import { getUserCart } from "../utils/cartStorage";
+import { clearCart, getUserCart } from "../utils/cartStorage";
+import { loadRazorpay } from "../utils/razorpay";
+import { addOrder } from "../utils/orderStorage";
+import { v4 as uuid } from "uuid";
+
 import { getUserAddresses, getDefaultAddressId, setDefaultAddressId } from "../utils/addressStorage";
 import Modal from "../components/Modal";
 import AddressForm from "../components/AddressModal";
@@ -13,8 +17,7 @@ const Checkout = () => {
   const [defaultAddressId, setDefaultAddressIdState] = useState(
     () => getDefaultAddressId() || getUserAddresses()[0]?.id || null
   );
-  const selectedAddress =
-    addresses.find(a => a.id === defaultAddressId) || null;
+  const selectedAddress = addresses.find(a => a.id === defaultAddressId) || null;
 
 
 
@@ -42,6 +45,59 @@ const Checkout = () => {
     setDefaultAddressId(id);
     setDefaultAddressIdState(id);
   };
+
+  const handlePayment = async () => {
+    if (!selectedAddress) return;
+
+    const res = await loadRazorpay();
+    if (!res) {
+      alert("Razorpay SDK failed to load");
+      return;
+    }
+
+    const options = {
+      key: "rzp_test_1DP5mmOlF5G5ag", // Razorpay test key
+      amount: totalAmount * 100,     // in paise
+      currency: "INR",
+      name: "React E-Store",
+      description: "Demo Order Payment",
+      image: "https://reactjs.org/logo-og.png",
+
+     handler: function () {
+  addOrder({
+    id: uuid(),
+    items: cartItems,
+    totalAmount,
+    address: [selectedAddress],
+    createdAt: new Date().toISOString(),
+  });
+
+  clearCart();
+
+  alert("Order placed successfully 🎉");
+  window.location.href = "/profile";
+},
+
+      prefill: {
+        name: selectedAddress.fullName,
+        email: user.email,
+        contact: selectedAddress.phone,
+      },
+
+      notes: {
+        address: selectedAddress.addressLine,
+      },
+
+      theme: {
+        color: "#7C2D12", // deep autumn primary
+      },
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const paymentObject = new (window as any).Razorpay(options);
+    paymentObject.open();
+  };
+
 
 
   return (
@@ -141,11 +197,14 @@ const Checkout = () => {
             </span>
           </div>
 
-          <button className="btn-primary w-full" disabled={!selectedAddress} onClick={() =>
-            alert("Order placed successfully (mock)")
-          } >
-            Place Order
+          <button
+            className="btn-primary w-full"
+            disabled={!selectedAddress}
+            onClick={handlePayment}
+          >
+            Pay ₹ {totalAmount}
           </button>
+
 
           {!selectedAddress && (
             <p className="text-danger text-sm mt-3">

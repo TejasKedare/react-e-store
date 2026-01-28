@@ -76,3 +76,19 @@ export const removeFromCart = (productId: number) => {
     ),
   });
 };
+
+export const clearCart = () => {
+  const user = getAuthUser();
+  if (!user) return;
+
+  const carts = getAllCarts();
+
+  localStorage.setItem(
+    CART_KEY,
+    JSON.stringify({
+      ...carts,
+      [user.username]: [],
+    })
+  );
+};
+

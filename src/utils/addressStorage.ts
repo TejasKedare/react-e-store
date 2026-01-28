@@ -1,14 +1,5 @@
+import type { Address } from "../types/address.types";
 import { getAuthUser } from "./localAuth";
-
-export interface Address {
-  id: string;
-  fullName: string;
-  phone: string;
-  addressLine: string;
-  city: string;
-  state: string;
-  pincode: string;
-}
 
 const ADDRESS_KEY = "userAddresses";
 const DEFAULT_ADDRESS_KEY = "defaultAddress";
