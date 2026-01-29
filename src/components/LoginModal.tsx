@@ -1,6 +1,9 @@
 import { useForm } from "react-hook-form";
 import Modal from "./Modal";
 import { login } from "../utils/localAuth";
+import { useAppDispatch } from "../store/hooks";
+import { loginSuccess } from "../store/slices/authSlice";
+
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -13,20 +16,24 @@ interface LoginFormValues {
 }
 
 const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginFormValues>();
+  const dispatch = useAppDispatch();
+  const { register, handleSubmit, formState: { errors, isSubmitting }} = useForm<LoginFormValues>();
 
   const onSubmit = async (data: LoginFormValues) => {
-  try {
-    login(data.username, data.password);
-    onClose();
- } catch (err: unknown) {
-    alert(err instanceof Error ? err.message : "An error occurred");
-  }
-};
+    try {
+      login(data.username, data.password); // localStorage
+      dispatch(
+        loginSuccess({
+          username: data.username,
+          email: "demo@email.com",
+        })
+      );
+      onClose();
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : "An error occurred");
+    }
+  };
+
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -56,18 +63,14 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
         {/* Password */}
         <div>
           <label className="text-sm font-medium">Password</label>
-          <input
-            type="password"
-            className="input w-full mt-1"
-            placeholder="Enter your password"
+          <input type="password" className="input w-full mt-1" placeholder="Enter your password"
             {...register("password", {
               required: "Password is required",
               minLength: {
                 value: 6,
                 message: "Minimum 6 characters",
               },
-            })}
-          />
+            })} />
           {errors.password && (
             <p className="text-danger text-sm mt-1">
               {errors.password.message}

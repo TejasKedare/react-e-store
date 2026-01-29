@@ -2,26 +2,26 @@ import { Link, NavLink } from "react-router-dom";
 import LoginModal from "../components/LoginModal";
 import SignupModal from "../components/SignupModal";
 import { useState } from "react";
-import { getAuthUser, logout } from "../utils/localAuth";
+import { logout } from "../utils/localAuth";
 import { getUserCart } from "../utils/cartStorage";
+import { logout as logoutAction } from "../store/slices/authSlice";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 
-interface AuthUser {
-  username: string;
-  email: string;
-}
+
 
 const Header = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
-  const [user, setUser] = useState<AuthUser | null>(() => getAuthUser());
+const user = useAppSelector((state) => state.auth.user);
   const cartCount = getUserCart().reduce((sum, item) => sum + item.quantity, 0);
+  const dispatch = useAppDispatch();
 
   const handleLogout = () => {
+    dispatch(logoutAction());
     logout();
-    setUser(null);
   };
 
-  return (  
+  return (
     <>
       <header className="bg-surface shadow-soft sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -104,7 +104,6 @@ const Header = () => {
         isOpen={showLogin}
         onClose={() => {
           setShowLogin(false);
-          setUser(getAuthUser()); // refresh user after login
         }}
       />
 

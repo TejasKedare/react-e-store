@@ -1,6 +1,8 @@
 import { useForm } from "react-hook-form";
 import Modal from "./Modal";
-import { signup } from "../utils/localAuth";
+import { signup, login } from "../utils/localAuth";
+import { useAppDispatch } from "../store/hooks";
+import { loginSuccess } from "../store/slices/authSlice";
 
 interface SignupModalProps {
   isOpen: boolean;
@@ -14,18 +16,36 @@ interface SignupFormValues {
 }
 
 const SignupModal = ({ isOpen, onClose }: SignupModalProps) => {
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<SignupFormValues>();
+  const dispatch = useAppDispatch();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<SignupFormValues>();
 
   const onSubmit = async (data: SignupFormValues) => {
-  try {
-    signup(data);
-    alert("Signup successful! Please login.");
-    onClose();
-  } catch (err: unknown) {
-    alert(err instanceof Error ? err.message : "An error occurred");
-  }
-};
+    try {
+      //  Create user (localStorage)
+      signup(data);
 
+      //  Auto-login user
+      login(data.username, data.password);
+
+      // Update Redux auth state
+      dispatch(
+        loginSuccess({
+          username: data.username,
+          email: data.email,
+        })
+      );
+
+      //  Close modal
+      onClose();
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : "An error occurred");
+    }
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -52,7 +72,7 @@ const SignupModal = ({ isOpen, onClose }: SignupModalProps) => {
           )}
         </div>
 
-
+        {/* Email */}
         <div>
           <label className="text-sm font-medium">Email</label>
           <input
@@ -73,6 +93,7 @@ const SignupModal = ({ isOpen, onClose }: SignupModalProps) => {
           )}
         </div>
 
+        {/* Password */}
         <div>
           <label className="text-sm font-medium">Password</label>
           <input
@@ -101,13 +122,6 @@ const SignupModal = ({ isOpen, onClose }: SignupModalProps) => {
           Sign Up
         </button>
       </form>
-
-      <p className="text-sm text-center text-textMuted mt-6">
-        Already have an account?{" "}
-        <span className="text-primary cursor-pointer font-medium">
-          Login
-        </span>
-      </p>
     </Modal>
   );
 };

@@ -1,17 +1,17 @@
 import { Navigate } from "react-router-dom";
 import { useState } from "react";
-import { getAuthUser } from "../utils/localAuth";
 import { getUserAddresses, deleteUserAddress, getDefaultAddressId, setDefaultAddressId } from "../utils/addressStorage";
 import { getUserOrders } from "../utils/orderStorage";
 import Modal from "../components/Modal";
 import AddressForm from "../components/AddressModal";
 import { logout } from "../utils/localAuth";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../store/hooks";
 
 type ProfileSection = "account" | "addresses" | "orders";
 
 const Profile = () => {
-  const user = getAuthUser();
+  const user = useAppSelector((state) => state.auth.user);
   const navigate = useNavigate();
 
 
