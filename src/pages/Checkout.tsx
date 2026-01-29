@@ -1,27 +1,32 @@
 import { Navigate } from "react-router-dom";
 import { useState } from "react";
-import { getAuthUser } from "../utils/localAuth";
-import { clearCart, getUserCart } from "../utils/cartStorage";
-import { loadRazorpay } from "../utils/razorpay";
-import { addOrder } from "../utils/orderStorage";
 import { v4 as uuid } from "uuid";
 
-import { getUserAddresses, getDefaultAddressId, setDefaultAddressId } from "../utils/addressStorage";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { setDefaultAddress } from "../store/slices/addressSlice";
+
+import { getUserCart, clearCart } from "../utils/cartStorage";
+import { loadRazorpay } from "../utils/razorpay";
+import { addOrder } from "../utils/orderStorage";
+
 import Modal from "../components/Modal";
 import AddressForm from "../components/AddressModal";
 
 const Checkout = () => {
-  const user = getAuthUser();
-  const cartItems = getUserCart();
-  const [addresses, setAddresses] = useState(() => getUserAddresses());
-  const [defaultAddressId, setDefaultAddressIdState] = useState(
-    () => getDefaultAddressId() || getUserAddresses()[0]?.id || null
+  /* ---------- REDUX STATE ---------- */
+  const user = useAppSelector((state) => state.auth.user);
+  const addresses = useAppSelector((state) => state.address.list);
+  const defaultAddressId = useAppSelector(
+    (state) => state.address.defaultId
   );
-  const selectedAddress = addresses.find(a => a.id === defaultAddressId) || null;
 
+  const dispatch = useAppDispatch();
 
-
+  /* ---------- LOCAL UI STATE ---------- */
   const [showAddressModal, setShowAddressModal] = useState(false);
+
+  /* ---------- CART (NEXT MIGRATION) ---------- */
+  const cartItems = getUserCart();
 
   if (!user) {
     return <Navigate to="/" replace />;
@@ -41,42 +46,47 @@ const Checkout = () => {
     0
   );
 
+  const selectedAddress =
+    addresses.find((a) => a.id === defaultAddressId) ||
+    addresses[0] ||
+    null;
+
+  /* ---------- HANDLERS ---------- */
+
   const handleMakeDefault = (id: string) => {
-    setDefaultAddressId(id);
-    setDefaultAddressIdState(id);
+    dispatch(setDefaultAddress(id));
   };
 
   const handlePayment = async () => {
     if (!selectedAddress) return;
 
-    const res = await loadRazorpay();
-    if (!res) {
+    const loaded = await loadRazorpay();
+    if (!loaded) {
       alert("Razorpay SDK failed to load");
       return;
     }
 
     const options = {
-      key: "rzp_test_1DP5mmOlF5G5ag", // Razorpay test key
-      amount: totalAmount * 100,     // in paise
+      key: "rzp_test_1DP5mmOlF5G5ag",
+      amount: totalAmount * 100,
       currency: "INR",
       name: "React E-Store",
       description: "Demo Order Payment",
       image: "https://reactjs.org/logo-og.png",
 
-     handler: function () {
-  addOrder({
-    id: uuid(),
-    items: cartItems,
-    totalAmount,
-    address: [selectedAddress],
-    createdAt: new Date().toISOString(),
-  });
+      handler: function () {
+        addOrder({
+          id: uuid(),
+          items: cartItems,
+          totalAmount,
+          address: selectedAddress,
+          createdAt: new Date().toISOString(),
+        });
 
-  clearCart();
-
-  alert("Order placed successfully 🎉");
-  window.location.href = "/profile";
-},
+        clearCart();
+        alert("Order placed successfully 🎉");
+        window.location.href = "/profile/orders";
+      },
 
       prefill: {
         name: selectedAddress.fullName,
@@ -89,7 +99,7 @@ const Checkout = () => {
       },
 
       theme: {
-        color: "#7C2D12", // deep autumn primary
+        color: "#7C2D12",
       },
     };
 
@@ -98,7 +108,7 @@ const Checkout = () => {
     paymentObject.open();
   };
 
-
+  /* ---------- UI ---------- */
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
@@ -107,12 +117,15 @@ const Checkout = () => {
       <div className="grid md:grid-cols-3 gap-8">
         <div className="md:col-span-2 space-y-6">
 
-          {/* -------- Address Section -------- */}
+          {/* ---------- Address Section ---------- */}
           <div className="card">
             <div className="flex justify-between items-center mb-4">
               <h3>Delivery Address</h3>
 
-              <button onClick={() => setShowAddressModal(true)} className="btn-outline text-sm" >
+              <button
+                onClick={() => setShowAddressModal(true)}
+                className="btn-outline text-sm"
+              >
                 Add Address
               </button>
             </div>
@@ -120,10 +133,18 @@ const Checkout = () => {
             {addresses.length ? (
               <div className="space-y-3 max-h-64 overflow-y-auto pr-2">
                 {addresses.map((addr) => {
-                  const isDefault = addr.id === defaultAddressId;
+                  const isDefault =
+                    addr.id === defaultAddressId;
 
                   return (
-                    <div key={addr.id} className={`border rounded-lg p-3 text-sm flex justify-between gap-4 ${isDefault ? "border-primary bg-background" : ""}`} >
+                    <div
+                      key={addr.id}
+                      className={`border rounded-lg p-3 text-sm flex justify-between gap-4 ${
+                        isDefault
+                          ? "border-primary bg-background"
+                          : ""
+                      }`}
+                    >
                       <div>
                         <p className="font-medium flex items-center gap-2">
                           {addr.fullName}
@@ -143,7 +164,12 @@ const Checkout = () => {
                       </div>
 
                       {!isDefault && (
-                        <button onClick={() => handleMakeDefault(addr.id)} className="text-primary text-sm hover:underline" >
+                        <button
+                          onClick={() =>
+                            handleMakeDefault(addr.id)
+                          }
+                          className="text-primary text-sm hover:underline"
+                        >
                           Make Default
                         </button>
                       )}
@@ -158,12 +184,15 @@ const Checkout = () => {
             )}
           </div>
 
-          {/* -------- Order Items -------- */}
+          {/* ---------- Order Items ---------- */}
           <div className="card">
             <h3 className="mb-4">Order Items</h3>
 
-            {cartItems.map(item => (
-              <div key={item.product.id} className="flex justify-between items-center border-b py-3 text-sm" >
+            {cartItems.map((item) => (
+              <div
+                key={item.product.id}
+                className="flex justify-between items-center border-b py-3 text-sm"
+              >
                 <div>
                   <p className="font-medium">
                     {item.product.title}
@@ -181,7 +210,7 @@ const Checkout = () => {
           </div>
         </div>
 
-        {/* -------- Summary -------- */}
+        {/* ---------- Summary ---------- */}
         <div className="card h-fit">
           <h3 className="mb-4">Price Summary</h3>
 
@@ -205,7 +234,6 @@ const Checkout = () => {
             Pay ₹ {totalAmount}
           </button>
 
-
           {!selectedAddress && (
             <p className="text-danger text-sm mt-3">
               Please add an address to continue
@@ -214,20 +242,15 @@ const Checkout = () => {
         </div>
       </div>
 
-      {/* -------- Address Modal -------- */}
-      <Modal isOpen={showAddressModal} onClose={() => setShowAddressModal(false)} >
+      {/* ---------- Address Modal ---------- */}
+      <Modal
+        isOpen={showAddressModal}
+        onClose={() => setShowAddressModal(false)}
+      >
         <AddressForm
-          onSuccess={() => {
-            const updated = getUserAddresses();
-            setAddresses(updated);
-            setDefaultAddressIdState(
-              getDefaultAddressId() || updated[0]?.id || null
-            );
-            setShowAddressModal(false);
-          }}
+          onSuccess={() => setShowAddressModal(false)}
         />
       </Modal>
-
     </div>
   );
 };

@@ -18,11 +18,7 @@ interface SignupFormValues {
 const SignupModal = ({ isOpen, onClose }: SignupModalProps) => {
   const dispatch = useAppDispatch();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<SignupFormValues>();
+  const { register, handleSubmit, formState: { errors, isSubmitting }} = useForm<SignupFormValues>();
 
   const onSubmit = async (data: SignupFormValues) => {
     try {
@@ -58,9 +54,7 @@ const SignupModal = ({ isOpen, onClose }: SignupModalProps) => {
         {/* Username */}
         <div>
           <label className="text-sm font-medium">Username</label>
-          <input
-            className="input w-full mt-1"
-            placeholder="Choose a username"
+          <input className="input w-full mt-1" placeholder="Choose a username"
             {...register("username", {
               required: "Username is required",
             })}
@@ -96,10 +90,7 @@ const SignupModal = ({ isOpen, onClose }: SignupModalProps) => {
         {/* Password */}
         <div>
           <label className="text-sm font-medium">Password</label>
-          <input
-            type="password"
-            className="input w-full mt-1"
-            placeholder="Create a password"
+          <input type="password" className="input w-full mt-1" placeholder="Create a password"
             {...register("password", {
               required: "Password is required",
               minLength: {
@@ -115,10 +106,7 @@ const SignupModal = ({ isOpen, onClose }: SignupModalProps) => {
           )}
         </div>
 
-        <button
-          className="btn-primary w-full mt-4"
-          disabled={isSubmitting}
-        >
+        <button className="btn-primary w-full mt-4" disabled={isSubmitting} >
           Sign Up
         </button>
       </form>
