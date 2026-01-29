@@ -21,7 +21,7 @@ const Header = () => {
     setUser(null);
   };
 
-  return (
+  return (  
     <>
       <header className="bg-surface shadow-soft sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">

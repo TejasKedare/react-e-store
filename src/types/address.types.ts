@@ -7,3 +7,8 @@ export interface Address {
   state: string;
   pincode: string;
 }
+
+export interface AddressState {
+  list: Address[];
+  defaultId?: string;
+}
