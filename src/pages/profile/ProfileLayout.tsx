@@ -1,9 +1,13 @@
 import { Outlet, NavLink, Navigate, useNavigate } from "react-router-dom";
 import { getAuthUser, logout } from "../../utils/localAuth";
+import { useState } from "react";
+import ConfirmModal from "../../components/ConfirmModal";
 
 const ProfileLayout = () => {
   const user = getAuthUser();
   const navigate = useNavigate();
+  const [confirmLogout, setConfirmLogout] = useState(false);
+
 
   if (!user) {
     return <Navigate to="/" replace />;
@@ -15,8 +19,7 @@ const ProfileLayout = () => {
   };
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
-    `w-full text-left px-3 py-2 rounded block ${
-      isActive ? "bg-primary text-white" : "hover:bg-background"
+    `w-full text-left px-3 py-2 rounded block ${isActive ? "bg-primary text-white" : "hover:bg-background"
     }`;
 
   return (
@@ -38,7 +41,7 @@ const ProfileLayout = () => {
 
             <hr className="my-2" />
 
-            <button onClick={handleLogout} className="w-full text-left px-3 py-2 rounded text-danger hover:bg-red-50" >
+            <button onClick={() => setConfirmLogout(true)} className="w-full text-left px-3 py-2 rounded text-danger hover:bg-red-50" >
               Logout
             </button>
           </div>
@@ -48,6 +51,9 @@ const ProfileLayout = () => {
           <Outlet />
         </main>
       </div>
+
+
+      <ConfirmModal isOpen={confirmLogout} title="Logout" message="Are you sure you want to logout?" confirmText="Logout" onCancel={() => setConfirmLogout(false)} onConfirm={handleLogout} />
     </div>
   );
 };

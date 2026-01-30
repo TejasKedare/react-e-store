@@ -83,9 +83,13 @@ const Header = () => {
               </>
             ) : (
               <>
-                <span className="hidden md:block text-textPrimary font-medium">
+               <NavLink
+                to="/profile/account" >
+                  <span className="hidden md:block text-textPrimary font-medium">
                   Hi, {user.username}
                 </span>
+              </NavLink>
+              
 
                 <button onClick={handleLogout} className="btn-outline hidden md:block" >
                   Logout

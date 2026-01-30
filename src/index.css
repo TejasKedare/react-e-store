@@ -24,18 +24,20 @@
 /* ---------- Component Layer ---------- */
 @layer components {
   .btn-primary {
-    @apply bg-primary text-white px-5 py-2.5 rounded-2xl 
-           shadow-soft hover:bg-primary-dark transition;
+    @apply bg-primary text-white px-5 py-2.5 rounded-2xl shadow-soft hover:bg-primary-dark transition;
   }
 
   .btn-secondary {
-    @apply bg-secondary text-white px-5 py-2.5 rounded-2xl 
-           hover:bg-secondary-dark transition;
+    @apply bg-secondary text-white px-5 py-2.5 rounded-2xl hover:bg-secondary-dark transition;
   }
 
+  .btn-danger {
+    @apply bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition;
+  }
+
+
   .btn-outline {
-    @apply border border-primary text-primary px-5 py-2.5 rounded-2xl
-           hover:bg-primary hover:text-white transition;
+    @apply border border-primary text-primary px-5 py-2.5 rounded-2xl hover:bg-primary hover:text-white transition;
   }
 
   .card {
@@ -43,8 +45,7 @@
   }
 
   .input {
-    @apply border border-textMuted/30 bg-white rounded-xl px-4 py-2
-           focus:outline-none focus:ring-2 focus:ring-primary;
+    @apply border border-textMuted/30 bg-white rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary;
   }
 
   .price {

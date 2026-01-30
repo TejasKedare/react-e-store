@@ -2,27 +2,32 @@ import { useState } from "react";
 import Modal from "../../components/Modal";
 import AddressForm from "../../components/AddressModal";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import {
-  deleteAddress,
-  setDefaultAddress,
-} from "../../store/slices/addressSlice";
+import { deleteAddress, setDefaultAddress } from "../../store/slices/addressSlice";
+import ConfirmModal from "../../components/ConfirmModal";
 
 const ProfileAddresses = () => {
   const dispatch = useAppDispatch();
 
-  const addresses = useAppSelector(
-    (state) => state.address.list
-  );
-  const defaultAddressId = useAppSelector(
-    (state) => state.address.defaultId
-  );
+  const addresses = useAppSelector((state) => state.address.list);
+  const defaultAddressId = useAppSelector((state) => state.address.defaultId);
 
   const [showModal, setShowModal] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const handleDelete = (id: string) => {
-    if (!window.confirm("Delete this address?")) return;
-    dispatch(deleteAddress(id));
+
+  const openDeleteConfirm = (id: string) => {
+    setSelectedId(id);
+    setConfirmOpen(true);
   };
+
+  const handleConfirmDelete = () => {
+    if (!selectedId) return;
+    dispatch(deleteAddress(selectedId));
+    setConfirmOpen(false);
+    setSelectedId(null);
+  };
+
 
   const handleMakeDefault = (id: string) => {
     dispatch(setDefaultAddress(id));
@@ -48,11 +53,10 @@ const ProfileAddresses = () => {
             return (
               <div
                 key={addr.id}
-                className={`border-b pb-3 mb-3 text-sm flex justify-between gap-4 ${
-                  isDefault
+                className={`border-b pb-3 mb-3 text-sm flex justify-between gap-4 ${isDefault
                     ? "bg-background rounded-lg p-3"
                     : ""
-                }`}
+                  }`}
               >
                 <div>
                   <p className="font-medium flex items-center gap-2">
@@ -85,11 +89,12 @@ const ProfileAddresses = () => {
                   )}
 
                   <button
-                    onClick={() => handleDelete(addr.id)}
+                    onClick={() => openDeleteConfirm(addr.id)}
                     className="text-danger text-sm hover:underline"
                   >
                     Delete
                   </button>
+
                 </div>
               </div>
             );
@@ -100,6 +105,16 @@ const ProfileAddresses = () => {
           </p>
         )}
       </div>
+
+      <ConfirmModal
+        isOpen={confirmOpen}
+        title="Delete Address"
+        message="This address will be permanently removed."
+        confirmText="Delete"
+        danger
+        onCancel={() => setConfirmOpen(false)}
+        onConfirm={handleConfirmDelete}
+      />
 
       {/* -------- Address Modal -------- */}
       <Modal

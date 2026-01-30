@@ -3,11 +3,8 @@ import { useParams } from "react-router-dom";
 import { get } from "../helpers/axios-helpers";
 import type { Product } from "../types/product.types";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import {
-  addItem,
-  updateQuantity,
-  removeItem,
-} from "../store/slices/cartSlice";
+import { addItem, updateQuantity, removeItem } from "../store/slices/cartSlice";
+import toast from "react-hot-toast";
 
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -44,6 +41,7 @@ const ProductDetails = () => {
 
   const handleAddToCart = () => {
     if (!product) return;
+    toast.success("Product added to cart");
     dispatch(addItem(product));
   };
 
@@ -69,6 +67,7 @@ const ProductDetails = () => {
 
   const handleRemove = () => {
     if (!cartItem) return;
+    toast.success("Product removed from cart");
     dispatch(removeItem(cartItem.product.id));
   };
 
@@ -114,18 +113,12 @@ const ProductDetails = () => {
           {/* ---------- Actions ---------- */}
           <div className="flex gap-4 mt-6 items-center">
             {!cartItem ? (
-              <button
-                className="btn-primary"
-                onClick={handleAddToCart}
-              >
+              <button className="btn-primary" onClick={handleAddToCart} >
                 Add to Cart
               </button>
             ) : (
               <div className="flex items-center gap-3">
-                <button
-                  className="btn-outline"
-                  onClick={handleDecrease}
-                >
+                <button className="btn-outline" onClick={handleDecrease} >
                   −
                 </button>
 
@@ -133,17 +126,11 @@ const ProductDetails = () => {
                   {cartItem.quantity}
                 </span>
 
-                <button
-                  className="btn-outline"
-                  onClick={handleIncrease}
-                >
+                <button className="btn-outline" onClick={handleIncrease} >
                   +
                 </button>
 
-                <button
-                  className="text-danger text-sm ml-4"
-                  onClick={handleRemove}
-                >
+                <button className="text-danger text-sm ml-4" onClick={handleRemove} >
                   Remove
                 </button>
               </div>
