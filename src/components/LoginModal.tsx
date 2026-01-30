@@ -3,6 +3,7 @@ import Modal from "./Modal";
 import { login } from "../utils/localAuth";
 import { useAppDispatch } from "../store/hooks";
 import { loginSuccess } from "../store/slices/authSlice";
+import toast from "react-hot-toast";
 
 
 interface LoginModalProps {
@@ -29,9 +30,12 @@ const LoginModal = ({ isOpen, onClose, onOpenSignup }: LoginModalProps) => {
           email: "demo@email.com",
         })
       );
+      toast.success("Logged in successfully");
       onClose();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : "An error occurred");
+      toast.error(
+        err instanceof Error ? err.message : "Login failed"
+      );
     }
   };
 

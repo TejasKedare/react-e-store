@@ -3,6 +3,7 @@ import Modal from "./Modal";
 import { signup, login } from "../utils/localAuth";
 import { useAppDispatch } from "../store/hooks";
 import { loginSuccess } from "../store/slices/authSlice";
+import toast from "react-hot-toast";
 
 interface SignupModalProps {
   isOpen: boolean;
@@ -40,7 +41,9 @@ const SignupModal = ({ isOpen, onClose, onOpenLogin }: SignupModalProps) => {
       //  Close modal
       onClose();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : "An error occurred");
+      toast.error(
+        err instanceof Error ? err.message : "Signup failed"
+      );
     }
   };
 

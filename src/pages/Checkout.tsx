@@ -11,6 +11,7 @@ import { addOrder } from "../utils/orderStorage";
 
 import Modal from "../components/Modal";
 import AddressForm from "../components/AddressModal";
+import toast from "react-hot-toast";
 
 const Checkout = () => {
   /* ---------- REDUX STATE ---------- */
@@ -60,8 +61,8 @@ const Checkout = () => {
 
     const loaded = await loadRazorpay();
     if (!loaded) {
-      alert("Razorpay SDK failed to load");
-      return;
+     toast.error("Payment gateway failed to load");
+     return;
     }
 
     const options = {
@@ -82,7 +83,7 @@ const Checkout = () => {
 
         dispatch(clearCart());
 
-        alert("Order placed successfully 🎉");
+        toast.success("Order placed successfully 🎉");
         window.location.href = "/profile/orders";
       },
 
