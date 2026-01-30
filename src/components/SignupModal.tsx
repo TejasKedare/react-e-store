@@ -7,6 +7,7 @@ import { loginSuccess } from "../store/slices/authSlice";
 interface SignupModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onOpenLogin: () => void;
 }
 
 interface SignupFormValues {
@@ -15,7 +16,7 @@ interface SignupFormValues {
   password: string;
 }
 
-const SignupModal = ({ isOpen, onClose }: SignupModalProps) => {
+const SignupModal = ({ isOpen, onClose, onOpenLogin }: SignupModalProps) => {
   const dispatch = useAppDispatch();
 
   const { register, handleSubmit, formState: { errors, isSubmitting }} = useForm<SignupFormValues>();
@@ -109,6 +110,17 @@ const SignupModal = ({ isOpen, onClose }: SignupModalProps) => {
         <button className="btn-primary w-full mt-4" disabled={isSubmitting} >
           Sign Up
         </button>
+
+        <p className="text-sm text-center text-textMuted mt-6">
+          Already have an account?{" "}
+          <span className="text-primary cursor-pointer font-medium"
+            onClick={() => {
+              onClose();
+              onOpenLogin();
+            }}>
+            Login
+          </span>
+        </p>
       </form>
     </Modal>
   );

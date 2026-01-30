@@ -105,17 +105,18 @@ const Header = () => {
       </header>
 
       {/* Modals */}
-      <LoginModal
-        isOpen={showLogin}
-        onClose={() => {
+      <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} onOpenSignup={() => {
           setShowLogin(false);
+          setShowSignup(true);
         }}
       />
 
-      <SignupModal
-        isOpen={showSignup}
-        onClose={() => setShowSignup(false)}
+      <SignupModal isOpen={showSignup} onClose={() => setShowSignup(false)} onOpenLogin={() => {
+          setShowSignup(false);
+          setShowLogin(true);
+        }}
       />
+
     </>
   );
 };

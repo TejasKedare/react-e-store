@@ -8,6 +8,7 @@ import { loginSuccess } from "../store/slices/authSlice";
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onOpenSignup: () => void;
 }
 
 interface LoginFormValues {
@@ -15,7 +16,7 @@ interface LoginFormValues {
   password: string;
 }
 
-const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
+const LoginModal = ({ isOpen, onClose, onOpenSignup }: LoginModalProps) => {
   const dispatch = useAppDispatch();
   const { register, handleSubmit, formState: { errors, isSubmitting }} = useForm<LoginFormValues>();
 
@@ -83,12 +84,15 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
         </button>
       </form>
 
-      <p className="text-sm text-center text-textMuted mt-6">
-        Don’t have an account?{" "}
-        <span className="text-primary cursor-pointer font-medium">
+      <p className="text-sm text-center text-textMuted mt-6"> Don’t have an account?{" "}
+        <span className="text-primary cursor-pointer font-medium" onClick={() => {
+            onClose();
+            onOpenSignup();
+          }}>
           Sign up
         </span>
       </p>
+
     </Modal>
   );
 };
