@@ -4,8 +4,8 @@ import { v4 as uuid } from "uuid";
 
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setDefaultAddress } from "../store/slices/addressSlice";
+import { clearCart } from "../store/slices/cartSlice";
 
-import { getUserCart, clearCart } from "../utils/cartStorage";
 import { loadRazorpay } from "../utils/razorpay";
 import { addOrder } from "../utils/orderStorage";
 
@@ -15,6 +15,7 @@ import AddressForm from "../components/AddressModal";
 const Checkout = () => {
   /* ---------- REDUX STATE ---------- */
   const user = useAppSelector((state) => state.auth.user);
+  const cartItems = useAppSelector((state) => state.cart.items);
   const addresses = useAppSelector((state) => state.address.list);
   const defaultAddressId = useAppSelector(
     (state) => state.address.defaultId
@@ -24,9 +25,6 @@ const Checkout = () => {
 
   /* ---------- LOCAL UI STATE ---------- */
   const [showAddressModal, setShowAddressModal] = useState(false);
-
-  /* ---------- CART (NEXT MIGRATION) ---------- */
-  const cartItems = getUserCart();
 
   if (!user) {
     return <Navigate to="/" replace />;
@@ -72,18 +70,18 @@ const Checkout = () => {
       currency: "INR",
       name: "React E-Store",
       description: "Demo Order Payment",
-      image: "https://reactjs.org/logo-og.png",
 
       handler: function () {
         addOrder({
           id: uuid(),
           items: cartItems,
           totalAmount,
-          address: selectedAddress,
+          address: [selectedAddress],
           createdAt: new Date().toISOString(),
         });
 
-        clearCart();
+        dispatch(clearCart());
+
         alert("Order placed successfully 🎉");
         window.location.href = "/profile/orders";
       },

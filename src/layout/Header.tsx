@@ -3,7 +3,6 @@ import LoginModal from "../components/LoginModal";
 import SignupModal from "../components/SignupModal";
 import { useState } from "react";
 import { logout } from "../utils/localAuth";
-import { getUserCart } from "../utils/cartStorage";
 import { logout as logoutAction } from "../store/slices/authSlice";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 
@@ -12,8 +11,14 @@ import { useAppDispatch, useAppSelector } from "../store/hooks";
 const Header = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
-const user = useAppSelector((state) => state.auth.user);
-  const cartCount = getUserCart().reduce((sum, item) => sum + item.quantity, 0);
+  const user = useAppSelector((state) => state.auth.user);
+
+  const cartCount = useAppSelector((state) =>
+    state.cart.items.reduce(
+      (sum, item) => sum + item.quantity,
+      0
+    )
+  );
   const dispatch = useAppDispatch();
 
   const handleLogout = () => {

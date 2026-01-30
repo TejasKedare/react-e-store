@@ -1,46 +1,49 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  getUserCart,
-  updateCartQuantity,
-  removeFromCart,
-} from "../utils/cartStorage";
-import type { CartItem } from "../utils/cartStorage";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { updateQuantity, removeItem } from "../store/slices/cartSlice";
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState<CartItem[]>(() =>
-    getUserCart()
+  const dispatch = useAppDispatch();
+
+  // ✅ Redux cart state
+  const cartItems = useAppSelector(
+    (state) => state.cart.items
   );
-
-  const refreshCart = () => {
-    setCartItems(getUserCart());
-  };
-
-  const handleIncrease = (productId: number, quantity: number) => {
-    updateCartQuantity(productId, quantity + 1);
-    refreshCart();
-  };
-
-  const handleDecrease = (productId: number, quantity: number) => {
-    updateCartQuantity(productId, quantity - 1);
-    refreshCart();
-  };
-
-  const handleRemove = (productId: number) => {
-    removeFromCart(productId);
-    refreshCart();
-  };
 
   const totalAmount = cartItems.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
     0
   );
 
+  const handleIncrease = (productId: number, quantity: number) => {
+    dispatch(
+      updateQuantity({
+        productId,
+        quantity: quantity + 1,
+      })
+    );
+  };
+
+  const handleDecrease = (productId: number, quantity: number) => {
+    dispatch(
+      updateQuantity({
+        productId,
+        quantity: quantity - 1,
+      })
+    );
+  };
+
+  const handleRemove = (productId: number) => {
+    dispatch(removeItem(productId));
+  };
+
   if (!cartItems.length) {
     return (
       <div className="max-w-4xl mx-auto px-6 py-10 text-center">
         <h1 className="mb-4">Your Cart</h1>
-        <p className="text-textMuted mb-6">Your cart is empty</p>
+        <p className="text-textMuted mb-6">
+          Your cart is empty
+        </p>
         <Link to="/shop" className="btn-primary">
           Continue Shopping
         </Link>
@@ -53,11 +56,18 @@ const Cart = () => {
       <h1 className="mb-8">Your Cart</h1>
 
       <div className="grid md:grid-cols-3 gap-8">
-        {/* Cart Items */}
+        {/* ---------- Cart Items ---------- */}
         <div className="md:col-span-2 space-y-4">
           {cartItems.map((item) => (
-            <div key={item.product.id} className="card flex gap-4 items-center" >
-              <img src={item.product.image} alt={item.product.title} className="h-24 w-24 object-contain" />
+            <div
+              key={item.product.id}
+              className="card flex gap-4 items-center"
+            >
+              <img
+                src={item.product.image}
+                alt={item.product.title}
+                className="h-24 w-24 object-contain"
+              />
 
               <div className="flex-1">
                 <h3 className="text-sm font-medium">
@@ -76,7 +86,9 @@ const Cart = () => {
                         item.product.id,
                         item.quantity
                       )
-                    }>
+                    }
+                    disabled={item.quantity <= 1}
+                  >
                     −
                   </button>
 
@@ -91,11 +103,17 @@ const Cart = () => {
                         item.product.id,
                         item.quantity
                       )
-                    }>
+                    }
+                  >
                     +
                   </button>
 
-                  <button className="text-danger text-sm ml-4" onClick={() => handleRemove(item.product.id) }>
+                  <button
+                    className="text-danger text-sm ml-4"
+                    onClick={() =>
+                      handleRemove(item.product.id)
+                    }
+                  >
                     Remove
                   </button>
                 </div>
@@ -108,7 +126,7 @@ const Cart = () => {
           ))}
         </div>
 
-        {/* Summary */}
+        {/* ---------- Summary ---------- */}
         <div className="card h-fit">
           <h3 className="mb-4">Order Summary</h3>
 
@@ -124,9 +142,12 @@ const Cart = () => {
             </span>
           </div>
 
-          <button className="btn-primary w-full">
-            <Link to="/checkout">Proceed to Checkout</Link>
-          </button>
+          <Link
+            to="/checkout"
+            className="btn-primary w-full text-center block"
+          >
+            Proceed to Checkout
+          </Link>
         </div>
       </div>
     </div>

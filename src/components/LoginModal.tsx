@@ -78,10 +78,7 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
           )}
         </div>
 
-        <button
-          className="btn-primary w-full mt-4"
-          disabled={isSubmitting}
-        >
+        <button className="btn-primary w-full mt-4" disabled={isSubmitting} >
           Login
         </button>
       </form>

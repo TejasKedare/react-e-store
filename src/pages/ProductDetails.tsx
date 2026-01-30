@@ -2,17 +2,29 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { get } from "../helpers/axios-helpers";
 import type { Product } from "../types/product.types";
-import { addToCart, getUserCart, updateCartQuantity, removeFromCart } from "../utils/cartStorage";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import {
+  addItem,
+  updateQuantity,
+  removeItem,
+} from "../store/slices/cartSlice";
 
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
+
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  const [cartItem, setCartItem] = useState<{
-    quantity: number;
-  } | null>(null);
 
+  /* ---------- REDUX ---------- */
+  const dispatch = useAppDispatch();
 
+  const cartItem = useAppSelector((state) =>
+    state.cart.items.find(
+      (item) => item.product.id === Number(id)
+    )
+  );
+
+  /* ---------- FETCH PRODUCT ---------- */
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -28,66 +40,39 @@ const ProductDetails = () => {
     fetchProduct();
   }, [id]);
 
-  useEffect(() => {
-    if (!product) return;
-
-    const item = getUserCart().find(
-      (i) => i.product.id === product.id
-    );
-
-    setCartItem(item ? { quantity: item.quantity } : null);
-  }, [product]);
-
+  /* ---------- HANDLERS ---------- */
 
   const handleAddToCart = () => {
     if (!product) return;
-
-    try {
-      addToCart(product);
-
-      const item = getUserCart().find(
-        (i) => i.product.id === product.id
-      );
-
-      setCartItem(item ? { quantity: item.quantity } : null);
-    } catch (err: unknown) {
-      if (err instanceof Error && err.message === "NOT_LOGGED_IN") {
-        alert("Please login to add items to cart");
-      }
-    }
+    dispatch(addItem(product));
   };
 
   const handleIncrease = () => {
-    if (!product || !cartItem) return;
-
-    updateCartQuantity(product.id, cartItem.quantity + 1);
-
-    const item = getUserCart().find(
-      (i) => i.product.id === product.id
+    if (!cartItem) return;
+    dispatch(
+      updateQuantity({
+        productId: cartItem.product.id,
+        quantity: cartItem.quantity + 1,
+      })
     );
-
-    setCartItem(item ? { quantity: item.quantity } : null);
   };
 
   const handleDecrease = () => {
-    if (!product || !cartItem) return;
-
-    updateCartQuantity(product.id, cartItem.quantity - 1);
-
-    const item = getUserCart().find(
-      (i) => i.product.id === product.id
+    if (!cartItem) return;
+    dispatch(
+      updateQuantity({
+        productId: cartItem.product.id,
+        quantity: cartItem.quantity - 1,
+      })
     );
-
-    setCartItem(item ? { quantity: item.quantity } : null);
   };
 
   const handleRemove = () => {
-    if (!product) return;
-
-    removeFromCart(product.id);
-    setCartItem(null);
+    if (!cartItem) return;
+    dispatch(removeItem(cartItem.product.id));
   };
 
+  /* ---------- UI STATES ---------- */
 
   if (loading) {
     return <p className="p-6">Loading product...</p>;
@@ -101,7 +86,7 @@ const ProductDetails = () => {
     <div className="max-w-7xl mx-auto px-6 py-10">
       <div className="grid md:grid-cols-2 gap-10">
 
-        {/* Image */}
+        {/* ---------- Image ---------- */}
         <div className="bg-white rounded-2xl shadow-card p-6 flex items-center justify-center">
           <img
             src={product.image}
@@ -110,7 +95,7 @@ const ProductDetails = () => {
           />
         </div>
 
-        {/* Details */}
+        {/* ---------- Details ---------- */}
         <div className="space-y-4">
           <h1 className="text-3xl">{product.title}</h1>
 
@@ -126,21 +111,32 @@ const ProductDetails = () => {
             {product.description}
           </p>
 
-          {/* Actions */}
+          {/* ---------- Actions ---------- */}
           <div className="flex gap-4 mt-6 items-center">
             {!cartItem ? (
-              <button className="btn-primary" onClick={handleAddToCart}>
+              <button
+                className="btn-primary"
+                onClick={handleAddToCart}
+              >
                 Add to Cart
               </button>
             ) : (
               <div className="flex items-center gap-3">
-                <button className="btn-outline" onClick={handleDecrease}>
+                <button
+                  className="btn-outline"
+                  onClick={handleDecrease}
+                >
                   −
                 </button>
 
-                <span className="font-medium">{cartItem.quantity}</span>
+                <span className="font-medium">
+                  {cartItem.quantity}
+                </span>
 
-                <button className="btn-outline" onClick={handleIncrease}>
+                <button
+                  className="btn-outline"
+                  onClick={handleIncrease}
+                >
                   +
                 </button>
 
@@ -153,8 +149,6 @@ const ProductDetails = () => {
               </div>
             )}
           </div>
-
-
         </div>
       </div>
     </div>
