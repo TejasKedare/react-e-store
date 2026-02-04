@@ -5,6 +5,8 @@ import type { Product } from "../types/product.types";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { addItem, updateQuantity, removeItem } from "../store/slices/cartSlice";
 import toast from "react-hot-toast";
+import { getAuthUser } from "../utils/localAuth";
+import { openLogin } from "../store/slices/uiSlice";
 
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -21,7 +23,6 @@ const ProductDetails = () => {
     )
   );
 
-  /* ---------- FETCH PRODUCT ---------- */
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -37,13 +38,20 @@ const ProductDetails = () => {
     fetchProduct();
   }, [id]);
 
-  /* ---------- HANDLERS ---------- */
-
   const handleAddToCart = () => {
-    if (!product) return;
-    toast.success("Product added to cart");
-    dispatch(addItem(product));
+    const user = getAuthUser();
+
+    if (!user) {
+      toast.error("Please login to add items to cart");
+      dispatch(openLogin());
+      return;
+    }
+
+    if (product) {
+      dispatch(addItem(product));
+    }
   };
+
 
   const handleIncrease = () => {
     if (!cartItem) return;
@@ -85,7 +93,6 @@ const ProductDetails = () => {
     <div className="max-w-7xl mx-auto px-6 py-10">
       <div className="grid md:grid-cols-2 gap-10">
 
-        {/* ---------- Image ---------- */}
         <div className="bg-white rounded-2xl shadow-card p-6 flex items-center justify-center">
           <img
             src={product.image}
@@ -94,7 +101,6 @@ const ProductDetails = () => {
           />
         </div>
 
-        {/* ---------- Details ---------- */}
         <div className="space-y-4">
           <h1 className="text-3xl">{product.title}</h1>
 

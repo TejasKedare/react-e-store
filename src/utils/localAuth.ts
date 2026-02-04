@@ -47,4 +47,6 @@ export const getAuthUser = () => {
   return JSON.parse(
     localStorage.getItem(AUTH_USER_KEY) || "null"
   );
+  
 };
+

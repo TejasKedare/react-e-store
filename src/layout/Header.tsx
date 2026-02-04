@@ -5,11 +5,11 @@ import { useState } from "react";
 import { logout } from "../utils/localAuth";
 import { logout as logoutAction } from "../store/slices/authSlice";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-
+import { openLogin, closeLogin } from "../store/slices/uiSlice";
 
 
 const Header = () => {
-  const [showLogin, setShowLogin] = useState(false);
+  const showLogin = useAppSelector((state) => state.ui.showLogin);
   const [showSignup, setShowSignup] = useState(false);
   const user = useAppSelector((state) => state.auth.user);
 
@@ -20,6 +20,7 @@ const Header = () => {
     )
   );
   const dispatch = useAppDispatch();
+  
 
   const handleLogout = () => {
     dispatch(logoutAction());
@@ -73,7 +74,7 @@ const Header = () => {
             {/* Auth State */}
             {!user ? (
               <>
-                <button onClick={() => setShowLogin(true)} className="btn-outline hidden md:block" >
+                <button onClick={() => dispatch(openLogin())} className="btn-outline hidden md:block" >
                   Login
                 </button>
 
@@ -109,17 +110,16 @@ const Header = () => {
       </header>
 
       {/* Modals */}
-      <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} onOpenSignup={() => {
-          setShowLogin(false);
+      <LoginModal isOpen={showLogin} onClose={() => dispatch(closeLogin())} onOpenSignup={() => {
+          dispatch(closeLogin());
           setShowSignup(true);
         }}
       />
 
       <SignupModal isOpen={showSignup} onClose={() => setShowSignup(false)} onOpenLogin={() => {
-          setShowSignup(false);
-          setShowLogin(true);
-        }}
-      />
+        setShowSignup(false);
+        dispatch(openLogin());
+      }}/>
 
     </>
   );
