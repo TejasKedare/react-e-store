@@ -7,12 +7,8 @@ interface Props {
 
 const ProductCard = ({ product }: Props) => {
   return (
-    <div className="card group">
-      <img
-        src={product.image}
-        alt={product.title}
-        className="h-44 mx-auto object-contain transition-transform group-hover:scale-105"
-      />
+    <div className="card group flex flex-col h-full">
+      <img src={product.image} alt={product.title} className="h-44 mx-auto object-contain transition-transform group-hover:scale-105"/>
 
       <h3 className="mt-4 text-sm font-semibold line-clamp-2">
         {product.title}
@@ -20,14 +16,12 @@ const ProductCard = ({ product }: Props) => {
 
       <p className="price mt-2">₹ {product.price}</p>
 
-      <Link
-        to={`/product/${product.id}`}
-        className="btn-primary mt-4 block text-center"
-      >
+      <Link to={`/product/${product.id}`} className="btn-primary mt-auto block text-center" >
         View Details
       </Link>
     </div>
   );
 };
+
 
 export default ProductCard;
