@@ -55,4 +55,25 @@
   .badge {
     @apply bg-accent/20 text-accent px-2 py-1 rounded-lg text-sm;
   }
+
+  .search-box {
+  @apply w-full flex items-center gap-3 bg-white border border-textMuted/20 
+         rounded-2xl px-4 py-2.5 shadow-soft 
+         focus-within:ring-2 focus-within:ring-primary transition;
 }
+
+.search-input {
+  @apply flex-1 bg-transparent outline-none text-textPrimary 
+         placeholder:text-textMuted;
+}
+
+.search-icon {
+  @apply text-textMuted;
+}
+
+.search-clear {
+  @apply text-textMuted hover:text-primary transition cursor-pointer;
+}
+
+}
+
