@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { useAppDispatch } from "../store/hooks";
 import { v4 as uuid } from "uuid";
 import { addAddress } from "../store/slices/addressSlice";
+import { numericField } from "../utils/numericField";
 
 interface AddressFormProps {
   onSuccess: () => void;
@@ -18,12 +19,10 @@ interface AddressFormValues {
 
 const AddressForm = ({ onSuccess }: AddressFormProps) => {
   const dispatch = useAppDispatch();
+  const phone = numericField(10);
+  const pincode = numericField(6);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<AddressFormValues>();
+  const { register, handleSubmit, formState: { errors } } = useForm<AddressFormValues>();
 
   const onSubmit = (data: AddressFormValues) => {
     dispatch(
@@ -33,7 +32,7 @@ const AddressForm = ({ onSuccess }: AddressFormProps) => {
       })
     );
 
-    onSuccess(); // ✅ close modal / refresh UI
+    onSuccess(); // close modal / refresh UI
   };
 
   return (
@@ -60,17 +59,23 @@ const AddressForm = ({ onSuccess }: AddressFormProps) => {
 
         {/* Phone */}
         <div>
+
           <input
             className="input w-full"
             placeholder="Phone Number"
+            {...phone.inputProps}
             {...register("phone", {
               required: "Phone is required",
               pattern: {
                 value: /^[0-9]{10}$/,
                 message: "Enter valid 10-digit phone",
               },
+              ...phone.registerProps,
             })}
           />
+
+
+
           {errors.phone && (
             <p className="text-danger text-sm">
               {errors.phone.message}
@@ -125,17 +130,22 @@ const AddressForm = ({ onSuccess }: AddressFormProps) => {
 
         {/* Pincode */}
         <div>
+
           <input
             className="input w-full"
             placeholder="Pincode"
+            {...pincode.inputProps}
             {...register("pincode", {
               required: "Pincode is required",
               pattern: {
                 value: /^[0-9]{6}$/,
                 message: "Enter valid pincode",
               },
+              ...pincode.registerProps,
             })}
           />
+
+
           {errors.pincode && (
             <p className="text-danger text-sm">
               {errors.pincode.message}
