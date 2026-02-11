@@ -70,22 +70,16 @@ const Profile = () => {
               Addresses
             </button>
 
-            <button
-              onClick={() => setActiveSection("orders")}
-              className={`w-full text-left px-3 py-2 rounded ${activeSection === "orders"
+            <button onClick={() => setActiveSection("orders")} className={`w-full text-left px-3 py-2 rounded ${activeSection === "orders"
                   ? "bg-primary text-white"
                   : "hover:bg-background"
-                }`}
-            >
+                }`} >
               Orders
             </button>
 
             <hr className="my-2" />
 
-            <button
-              onClick={handleLogout}
-              className="w-full text-left px-3 py-2 rounded text-danger hover:bg-red-50"
-            >
+            <button onClick={handleLogout} className="w-full text-left px-3 py-2 rounded text-danger hover:bg-red-50" >
               Logout
             </button>
           </div>
@@ -126,10 +120,8 @@ const Profile = () => {
               <div className="flex justify-between items-center">
                 <h1>Saved Addresses</h1>
 
-                <button
-                  onClick={() => setShowAddressModal(true)}
-                  className="btn-outline text-sm"
-                >
+                <button onClick={() => setShowAddressModal(true)}
+                  className="btn-outline text-sm" >
                   Add Address
                 </button>
               </div>
@@ -140,13 +132,11 @@ const Profile = () => {
                     const isDefault = addr.id === defaultAddressId;
 
                     return (
-                      <div
-                        key={addr.id}
+                      <div key={addr.id}
                         className={`border-b pb-3 mb-3 text-sm flex justify-between gap-4 ${isDefault
                             ? "bg-background rounded-lg p-3"
                             : ""
-                          }`}
-                      >
+                          }`} >
                         <div>
                           <p className="font-medium flex items-center gap-2">
                             {addr.fullName}
@@ -166,22 +156,16 @@ const Profile = () => {
 
                         <div className="flex flex-col gap-2 text-right">
                           {!isDefault && (
-                            <button
-                              onClick={() =>
-                                handleSetDefault(addr.id)
-                              }
-                              className="text-primary text-sm hover:underline"
-                            >
+                            <button onClick={() => handleSetDefault(addr.id)}
+                              className="text-primary text-sm hover:underline" >
                               Make Default
                             </button>
                           )}
 
-                          <button
-                            onClick={() =>
+                          <button onClick={() =>
                               handleDeleteAddress(addr.id)
                             }
-                            className="text-danger text-sm hover:underline"
-                          >
+                            className="text-danger text-sm hover:underline" >
                             Delete
                           </button>
                         </div>
@@ -203,10 +187,7 @@ const Profile = () => {
                 {orders.length ? (
                   <div className="space-y-6">
                     {orders.map((order) => (
-                      <div
-                        key={order.id}
-                        className="border rounded-lg p-4 text-sm"
-                      >
+                      <div key={order.id} className="border rounded-lg p-4 text-sm" >
                         <p className="text-textMuted mb-2">
                           Order Date:{" "}
                           {new Date(
@@ -215,10 +196,7 @@ const Profile = () => {
                         </p>
 
                         {order.items.map((item) => (
-                          <div
-                            key={item.product.id}
-                            className="flex justify-between py-2 border-b"
-                          >
+                          <div key={item.product.id} className="flex justify-between py-2 border-b" >
                             <div>
                               <p className="font-medium">
                                 {item.product.title}

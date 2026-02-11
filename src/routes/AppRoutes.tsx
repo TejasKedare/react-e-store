@@ -1,5 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { lazy, Suspense } from "react";
+import ProtectedRoute from "./ProtectedRoute";
+import ErrorBoundary from "../components/ErrorBoundary";
 
 const Home = lazy(() => import("../pages/Home"));
 const Shop = lazy(() => import("../pages/Shop"));
@@ -16,24 +18,32 @@ const NotFound = lazy(() => import("../pages/NotFound"));
 
 const AppRoutes = () => {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/shop" element={<Shop />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/product/:id" element={<ProductDetails />} />
-        <Route path="/cart" element={<Cart />} />
+    <ErrorBoundary>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/product/:id" element={<ProductDetails />} />
+          <Route path="/cart" element={<Cart />} />
 
-        <Route path="/profile" element={<ProfileLayout />}>
-          <Route index element={<ProfileAccount />} />
-          <Route path="account" element={<ProfileAccount />} />
-          <Route path="addresses" element={<ProfileAddresses />} />
-          <Route path="orders" element={<ProfileOrders />} />
-        </Route>
+          {/* Protected routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/checkout" element={<Checkout />} />
 
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Suspense>
+            <Route path="/profile" element={<ProfileLayout />}>
+              <Route index element={<ProfileAccount />} />
+              <Route path="account" element={<ProfileAccount />} />
+              <Route path="addresses" element={<ProfileAddresses />} />
+              <Route path="orders" element={<ProfileOrders />} />
+            </Route>
+          </Route>
+
+          {/* 404 */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
+    </ErrorBoundary>
   );
 };
 
