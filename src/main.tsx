@@ -6,12 +6,15 @@ import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { store } from './store/index.ts'
 import { Toaster } from 'react-hot-toast'
+import ErrorBoundary from './components/ErrorBoundary.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <Provider store={store}>
+        <ErrorBoundary>
         <App />
+        </ErrorBoundary>
         <Toaster
           position="top-right"
           toastOptions={{
