@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { get } from "../helpers/axios-helpers";
 import type { Product } from "../types/product.types";
@@ -38,7 +38,7 @@ const ProductDetails = () => {
     fetchProduct();
   }, [id]);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = useCallback(() => {
     const user = getAuthUser();
 
     if (!user) {
@@ -47,10 +47,9 @@ const ProductDetails = () => {
       return;
     }
 
-    if (product) {
-      dispatch(addItem(product));
-    }
-  };
+    if (product) dispatch(addItem(product));
+  }, [product, dispatch]);
+
 
 
   const handleIncrease = () => {

@@ -1,19 +1,24 @@
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { updateQuantity, removeItem } from "../store/slices/cartSlice";
+import { useMemo } from "react";
 
 const Cart = () => {
   const dispatch = useAppDispatch();
 
-  // ✅ Redux cart state
   const cartItems = useAppSelector(
     (state) => state.cart.items
   );
 
-  const totalAmount = cartItems.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
-    0
+  const totalAmount = useMemo(
+    () =>
+      cartItems.reduce(
+        (sum, item) => sum + item.product.price * item.quantity,
+        0
+      ),
+    [cartItems]
   );
+
 
   const handleIncrease = (productId: number, quantity: number) => {
     dispatch(

@@ -1,7 +1,7 @@
 import { Link, NavLink } from "react-router-dom";
 import LoginModal from "../components/LoginModal";
 import SignupModal from "../components/SignupModal";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { logout } from "../utils/localAuth";
 import { logout as logoutAction } from "../store/slices/authSlice";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
@@ -13,12 +13,13 @@ const Header = () => {
   const [showSignup, setShowSignup] = useState(false);
   const user = useAppSelector((state) => state.auth.user);
 
-  const cartCount = useAppSelector((state) =>
-    state.cart.items.reduce(
-      (sum, item) => sum + item.quantity,
-      0
-    )
+  const items = useAppSelector((state) => state.cart.items);
+
+  const cartCount = useMemo(
+    () => items.reduce((sum, item) => sum + item.quantity, 0),
+    [items]
   );
+
   const dispatch = useAppDispatch();
   
 
