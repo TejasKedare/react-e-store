@@ -6,12 +6,15 @@ import { logout } from "../utils/localAuth";
 import { logout as logoutAction } from "../store/slices/authSlice";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { openLogin, closeLogin } from "../store/slices/uiSlice";
+import { useAppMessage } from "../context/app-context";
 
 
 const Header = () => {
   const showLogin = useAppSelector((state) => state.ui.showLogin);
   const [showSignup, setShowSignup] = useState(false);
   const user = useAppSelector((state) => state.auth.user);
+  const { message } = useAppMessage();
+
 
   const items = useAppSelector((state) => state.cart.items);
 
@@ -69,6 +72,10 @@ const Header = () => {
               </NavLink>
             )}
           </nav>
+          <div className="bg-primary text-white text-center text-sm py-2">
+            {message}
+          </div>
+
 
           {/* Right Actions */}
           <div className="flex items-center gap-4">

@@ -1,35 +1,27 @@
+import { useAppMessage } from "../context/app-context";
+
 const Footer = () => {
+  const { setMessage } = useAppMessage();
+
   return (
-    <footer className="bg-surface border-t border-textMuted/20 mt-12">
-      <div className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
-        
-        {/* Brand */}
-        <div>
-          <h3 className="font-heading text-lg font-semibold text-primary">
-            React E-Store
-          </h3>
-          <p className="text-textMuted mt-2">
-            Premium products inspired by deep autumn tones.
-          </p>
-        </div>
+    <footer className="bg-surface border-t mt-10 p-6 text-center space-y-4">
+      <p className="text-textMuted text-sm">
+        © 2026 React E-Store. All rights reserved.
+      </p>
 
-        {/* Links */}
-        <div>
-          <h4 className="font-semibold mb-2">Quick Links</h4>
-          <ul className="space-y-1 text-textMuted">
-            <li>Home</li>
-            <li>Shop</li>
-            <li>Profile</li>
-            <li>Checkout</li>
-          </ul>
-        </div>
+      {/* Demo buttons to change global message */}
+      <div className="flex gap-3 justify-center">
+        <button className="btn-outline text-xs" onClick={() => setMessage("🔥 Big Sale Today – Up to 50% OFF")} >
+           Show Sale Message
+        </button>
 
-        {/* Info */}
-        <div>
-          <h4 className="font-semibold mb-2">Contact</h4>
-          <p className="text-textMuted">support@reactestore.com</p>
-          <p className="text-textMuted">© 2026 React E-Store</p>
-        </div>
+        <button className="btn-outline text-xs" onClick={() =>   setMessage("🚚 Free delivery on orders above ₹999") } >
+          Show Delivery Message
+        </button>
+
+        <button className="btn-outline text-xs" onClick={() => setMessage("")} >
+          Clear Message
+        </button>
       </div>
     </footer>
   );

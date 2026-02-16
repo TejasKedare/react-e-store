@@ -42,6 +42,7 @@ export default {
         "2xl": "1.25rem",
       },
     },
+    darkMode: "class",
   },
   plugins: [],
 };
