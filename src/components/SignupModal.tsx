@@ -4,6 +4,8 @@ import { signup, login } from "../utils/localAuth";
 import { useAppDispatch } from "../store/hooks";
 import { loginSuccess } from "../store/slices/authSlice";
 import toast from "react-hot-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signupSchema } from "../schemas/signupSchema";
 
 interface SignupModalProps {
   isOpen: boolean;
@@ -20,7 +22,9 @@ interface SignupFormValues {
 const SignupModal = ({ isOpen, onClose, onOpenLogin }: SignupModalProps) => {
   const dispatch = useAppDispatch();
 
-  const { register, handleSubmit, formState: { errors, isSubmitting }} = useForm<SignupFormValues>();
+  const { register, handleSubmit, formState: { errors, isSubmitting }} = useForm<SignupFormValues>({
+    resolver: zodResolver(signupSchema),
+  });
 
   const onSubmit = async (data: SignupFormValues) => {
     try {
