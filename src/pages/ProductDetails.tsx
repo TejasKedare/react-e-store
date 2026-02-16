@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { get } from "../helpers/axios-helpers";
 import type { Product } from "../types/product.types";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
@@ -10,33 +11,18 @@ import { openLogin } from "../store/slices/uiSlice";
 
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
-
-  const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  /* ---------- REDUX ---------- */
   const dispatch = useAppDispatch();
 
+  const { data: product, isLoading, isError,
+  } = useQuery<Product>({
+    queryKey: ["product", id],  /// this is for unique idenfification
+    queryFn: () => get<Product>(`/products/${id}`),
+    enabled: !!id,  /// this is to prevenet api calls when id is undefined
+  });
+
   const cartItem = useAppSelector((state) =>
-    state.cart.items.find(
-      (item) => item.product.id === Number(id)
-    )
+    state.cart.items.find((item) => item.product.id === Number(id))
   );
-
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const data = await get<Product>(`/products/${id}`);
-        setProduct(data);
-      } catch (error) {
-        console.error("Failed to fetch product", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProduct();
-  }, [id]);
 
   const handleAddToCart = useCallback(() => {
     const user = getAuthUser();
@@ -49,8 +35,6 @@ const ProductDetails = () => {
 
     if (product) dispatch(addItem(product));
   }, [product, dispatch]);
-
-
 
   const handleIncrease = () => {
     if (!cartItem) return;
@@ -78,13 +62,13 @@ const ProductDetails = () => {
     dispatch(removeItem(cartItem.product.id));
   };
 
-  /* ---------- UI STATES ---------- */
+  /* ---------- UI ---------- */
 
-  if (loading) {
+  if (isLoading) {
     return <p className="p-6">Loading product...</p>;
   }
 
-  if (!product) {
+  if (isError || !product) {
     return <p className="p-6">Product not found</p>;
   }
 
@@ -92,6 +76,7 @@ const ProductDetails = () => {
     <div className="max-w-7xl mx-auto px-6 py-10">
       <div className="grid md:grid-cols-2 gap-10">
 
+        {/* Image */}
         <div className="bg-white rounded-2xl shadow-card p-6 flex items-center justify-center">
           <img
             src={product.image}
@@ -100,12 +85,11 @@ const ProductDetails = () => {
           />
         </div>
 
+        {/* Details */}
         <div className="space-y-4">
           <h1 className="text-3xl">{product.title}</h1>
 
-          <p className="text-textMuted">
-            Category: {product.category}
-          </p>
+          <p className="text-textMuted">Category: {product.category}</p>
 
           <p className="text-xl font-semibold text-primary">
             ₹ {product.price}
@@ -115,27 +99,28 @@ const ProductDetails = () => {
             {product.description}
           </p>
 
-          {/* ---------- Actions ---------- */}
+          {/* Actions */}
           <div className="flex gap-4 mt-6 items-center">
             {!cartItem ? (
-              <button className="btn-primary" onClick={handleAddToCart} >
+              <button className="btn-primary" onClick={handleAddToCart}>
                 Add to Cart
               </button>
             ) : (
               <div className="flex items-center gap-3">
-                <button className="btn-outline" onClick={handleDecrease} >
+                <button className="btn-outline" onClick={handleDecrease}>
                   −
                 </button>
 
-                <span className="font-medium">
-                  {cartItem.quantity}
-                </span>
+                <span className="font-medium">{cartItem.quantity}</span>
 
-                <button className="btn-outline" onClick={handleIncrease} >
+                <button className="btn-outline" onClick={handleIncrease}>
                   +
                 </button>
 
-                <button className="text-danger text-sm ml-4" onClick={handleRemove} >
+                <button
+                  className="text-danger text-sm ml-4"
+                  onClick={handleRemove}
+                >
                   Remove
                 </button>
               </div>
